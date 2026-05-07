@@ -3,12 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cake Creators Programme — Kalyan-Ji Bakery</title>
+  <title>Cake Creators Programme — Kalyan-Ji Bakery | Design Your Dream Cake</title>
+  <meta name="description" content="Design your dream cake with AI-powered visualization. Choose every detail — sponge, filling, frosting, and decoration — then share your creation or place a bespoke order with Kalyan-Ji Bakery." />
+  <meta name="keywords" content="cake design, custom cake, bakery, AI cake generator, cake builder, Kalyan-Ji Bakery" />
+  <meta name="author" content="Kalyan-Ji Bakery" />
+  <meta name="theme-color" content="#2C1A0E" />
+  <meta property="og:title" content="Cake Creators Programme — Kalyan-Ji Bakery" />
+  <meta property="og:description" content="Design your dream cake with AI-powered visualization. Choose every detail and share via WhatsApp." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://kalyan-ji-cake-creator.vercel.app/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
   <script src="js/cake-data.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -68,6 +79,7 @@
       font-size: 14px; letter-spacing: 0.02em;
     }
     .btn-primary:hover { background: var(--ink-mid); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
     .btn-outline {
       background: transparent; color: var(--ink); padding: 11px 22px; border-radius: 50px;
       font-size: 14px; border: 1.5px solid var(--parchment-dark);
@@ -139,6 +151,102 @@
     .section-label {
       font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--ink-light);
+    }
+
+    /* ─── Mobile Responsive ─── */
+    @media (max-width: 768px) {
+      .hero-section {
+        flex-direction: column !important;
+        padding: 40px 24px !important;
+        min-height: auto !important;
+        gap: 32px !important;
+        text-align: center;
+      }
+      .hero-section h1 {
+        font-size: 36px !important;
+      }
+      .hero-section p {
+        font-size: 15px !important;
+      }
+      .hero-cta-row {
+        justify-content: center;
+      }
+      .hero-previews {
+        justify-content: center;
+      }
+      .features-grid {
+        grid-template-columns: 1fr 1fr !important;
+        padding: 28px 24px !important;
+      }
+      .templates-section {
+        padding: 32px 24px !important;
+      }
+      .templates-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      .builder-layout {
+        flex-direction: column !important;
+      }
+      .builder-sidebar {
+        width: 100% !important;
+        max-height: 45vh;
+        border-right: none !important;
+        border-bottom: 1px solid var(--parchment-dark) !important;
+      }
+      .library-header {
+        padding: 16px 20px 0 !important;
+      }
+      .library-filters-row {
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+      .library-filter-chips {
+        flex-wrap: wrap;
+      }
+      .library-grid-wrapper {
+        padding: 16px 20px !important;
+      }
+      .detail-modal-inner {
+        width: 95vw !important;
+        max-height: 92vh !important;
+      }
+      .detail-modal-header {
+        flex-direction: column !important;
+        gap: 16px !important;
+        padding: 20px !important;
+      }
+      .detail-modal-preview {
+        width: 100% !important;
+        height: 200px !important;
+      }
+      .nav-desktop { display: none !important; }
+      .nav-mobile { display: flex !important; }
+      .header-bar {
+        padding: 0 16px !important;
+      }
+      .wa-sheet-inner {
+        width: 95vw !important;
+      }
+      .prompt-hint {
+        display: none;
+      }
+    }
+    @media (min-width: 769px) {
+      .nav-mobile { display: none !important; }
+    }
+    @media (max-width: 480px) {
+      .features-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .templates-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .hero-previews {
+        display: none !important;
+      }
+      .detail-modal-actions {
+        flex-direction: column !important;
+      }
     }
   </style>
 </head>

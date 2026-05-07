@@ -75,7 +75,7 @@ function WhatsAppOrderSheet({ cake, onClose, bakerPhone }) {
       }}
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div style={{
+      <div className="wa-sheet-inner" style={{
         background: 'var(--white)', borderRadius: 24, width: 500,
         maxHeight: '92vh', overflowY: 'auto',
         boxShadow: '0 24px 80px rgba(44,26,14,0.24)',

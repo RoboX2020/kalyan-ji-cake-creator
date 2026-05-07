@@ -109,7 +109,7 @@ function CakeLibrary({ onEditCake, userCakes, bakerPhone }) {
       )}
 
       {/* Header */}
-      <div style={{
+      <div className="library-header" style={{
         padding: '20px 28px 0', borderBottom: '1px solid var(--parchment-dark)',
         background: 'var(--white)', flexShrink: 0,
       }}>
@@ -137,7 +137,7 @@ function CakeLibrary({ onEditCake, userCakes, bakerPhone }) {
         </div>
 
         {/* Search + filters */}
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', paddingBottom: 16 }}>
+        <div className="library-filters-row" style={{ display: 'flex', gap: 10, alignItems: 'center', paddingBottom: 16 }}>
           <div style={{ position: 'relative', flex: 1, maxWidth: 280 }}>
             <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-light)', fontSize: 14 }}>🔍</span>
             <input className="input" placeholder="Search cakes, creators…"
@@ -145,7 +145,7 @@ function CakeLibrary({ onEditCake, userCakes, bakerPhone }) {
               style={{ paddingLeft: 36, height: 38, fontSize: 13 }}
             />
           </div>
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div className="library-filter-chips" style={{ display: 'flex', gap: 6 }}>
             {filters.map(f => (
               <button key={f.id} onClick={() => setFilter(f.id)} className={`chip ${filter === f.id ? 'active' : ''}`}
                 style={{ cursor: 'pointer', border: 'none' }}>
@@ -157,7 +157,7 @@ function CakeLibrary({ onEditCake, userCakes, bakerPhone }) {
       </div>
 
       {/* Grid */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>
+      <div className="library-grid-wrapper" style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--ink-light)' }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>🎂</div>
@@ -311,16 +311,16 @@ function CakeDetailModal({ cake, onClose, onLike, onEdit, onShare, onRate, onCom
       display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
       backdropFilter: 'blur(6px)',
     }} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{
+      <div className="detail-modal-inner" style={{
         background: 'var(--white)', borderRadius: 'var(--radius-xl)', width: 680, maxHeight: '88vh',
         overflow: 'hidden', boxShadow: 'var(--shadow-lg)', display: 'flex', flexDirection: 'column',
       }}>
         {/* Header */}
-        <div style={{
+        <div className="detail-modal-header" style={{
           display: 'flex', gap: 24, padding: 28, borderBottom: '1px solid var(--parchment-dark)',
         }}>
           {/* Cake preview */}
-          <div style={{
+          <div className="detail-modal-preview" style={{
             width: 200, height: 200, flexShrink: 0,
             background: 'var(--parchment)', borderRadius: 'var(--radius-md)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -362,7 +362,7 @@ function CakeDetailModal({ cake, onClose, onLike, onEdit, onShare, onRate, onCom
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <div className="detail-modal-actions" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               <button className="btn btn-primary btn-sm" onClick={onEdit}>
                 ✎ Remix This Cake
               </button>

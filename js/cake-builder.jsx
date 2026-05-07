@@ -198,10 +198,10 @@ function CakeBuilder({ onSave, initialConfig = null, bakerPhone }) {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
+    <div className="builder-layout" style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
 
       {/* ── Left panel: prompt + hints ── */}
-      <div style={{
+      <div className="builder-sidebar" style={{
         width: 400, flexShrink: 0, display: 'flex', flexDirection: 'column',
         borderRight: '1px solid var(--parchment-dark)',
         background: 'var(--white)', overflow: 'hidden',
@@ -288,7 +288,7 @@ function CakeBuilder({ onSave, initialConfig = null, bakerPhone }) {
             onFocus={e => { e.target.style.borderColor = 'var(--caramel)'; e.target.style.boxShadow = '0 0 0 3px rgba(200,149,108,0.12)'; }}
             onBlur={e => { e.target.style.borderColor = 'var(--parchment-dark)'; e.target.style.boxShadow = 'none'; }}
           />
-          <p style={{ fontSize: 11, color: 'var(--ink-light)', marginTop: 4, textAlign: 'right' }}>⌘↵ to generate</p>
+          <p className="prompt-hint" style={{ fontSize: 11, color: 'var(--ink-light)', marginTop: 4, textAlign: 'right' }}>⌘↵ to generate</p>
         </div>
 
         {/* Hint chips */}
@@ -553,13 +553,42 @@ function MainImageArea({ prompt, generatedImage, expandedPrompt, isGenerating, e
       )}
 
       {!hasApiKey && (
-        <p style={{
-          fontSize: 11.5, color: 'var(--caramel-dark)', textAlign: 'center',
-          background: 'var(--caramel-light)', padding: '7px 16px',
-          borderRadius: 50, maxWidth: 380,
+        <div style={{
+          textAlign: 'center', maxWidth: 380,
+          background: 'var(--caramel-light)', padding: '12px 18px',
+          borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 8,
         }}>
-          ⚠️ Add your Gemini API key in <code style={{ fontSize: 10.5 }}>cake-ai-image.js</code>
-        </p>
+          <p style={{ fontSize: 12, color: 'var(--caramel-dark)', fontWeight: 500 }}>
+            ⚠️ Enter your Gemini API key to generate cakes
+          </p>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <input
+              className="input"
+              type="password"
+              placeholder="Paste your Gemini API key…"
+              style={{ fontSize: 12, padding: '7px 10px', flex: 1 }}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && e.target.value.trim()) {
+                  window.setCakeApiKey(e.target.value.trim());
+                  window.location.reload();
+                }
+              }}
+            />
+            <button className="btn btn-primary btn-sm" style={{ fontSize: 11 }}
+              onClick={e => {
+                const input = e.currentTarget.previousElementSibling;
+                if (input.value.trim()) {
+                  window.setCakeApiKey(input.value.trim());
+                  window.location.reload();
+                }
+              }}
+            >Save</button>
+          </div>
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 11, color: 'var(--caramel-dark)' }}>
+            Get a free API key from Google AI Studio →
+          </a>
+        </div>
       )}
 
       {/* Prompt reveal */}

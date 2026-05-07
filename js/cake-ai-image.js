@@ -1,7 +1,22 @@
 // Kalyan-Ji Bakery — Gemini Image Generation Service
 // Prompt-first: user's description drives everything. System enforces realistic, real-world bakeable cakes.
 
-const GEMINI_API_KEY = 'AIzaSyAQ0UK8WMNbtmKzFCpqGk5_CPXcL-bwt1Y';
+// API key is loaded at runtime — never hardcoded in source.
+// Priority: 1) window.__CAKE_API_KEY (set by hosting env) → 2) localStorage → 3) user prompt
+function _getApiKey() {
+  if (window.__CAKE_API_KEY) return window.__CAKE_API_KEY;
+  const stored = localStorage.getItem('kj_gemini_key');
+  if (stored) return stored;
+  return null;
+}
+
+// Allow the user to set their own key from the UI
+window.setCakeApiKey = function(key) {
+  localStorage.setItem('kj_gemini_key', key);
+  window.__CAKE_API_KEY = key;
+};
+
+const GEMINI_API_KEY = _getApiKey();
 
 // Build a hyper-detailed image prompt from user's free-text description
 async function buildPromptFromUserText(userText, inspirationBase64) {
@@ -111,7 +126,7 @@ async function generateWithGeminiFlashImage(prompt, apiKey) {
 
 // Main: build expanded prompt from user text + optional inspiration image, then generate
 async function generateCakeImageFromPrompt(userText, inspirationBase64) {
-  const apiKey = GEMINI_API_KEY;
+  const apiKey = _getApiKey();
   if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
     throw new Error('Please add your Gemini API key to cake-ai-image.js');
   }
@@ -139,7 +154,7 @@ async function generateCakeImageFromPrompt(userText, inspirationBase64) {
 
 // Export
 window.generateCakeImageFromPrompt = generateCakeImageFromPrompt;
-window.GEMINI_API_KEY_REF = () => GEMINI_API_KEY;
+window.GEMINI_API_KEY_REF = () => _getApiKey();
 window.generateCakeImage = (config) => {
   const text = config._rawPrompt || 'A beautiful celebration cake';
   return generateCakeImageFromPrompt(text).then(r => r.image);

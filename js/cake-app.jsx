@@ -1,12 +1,12 @@
-// Kalyan-Ji Bakery — Main App Shell
+// Kalyan-Ji Bakery — Main App Shell (Production)
 
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+const TWEAK_DEFAULTS = {
   "bakerPhone": "",
   "accentColor": "#C8956C",
   "cardRadius": 16,
   "fontStyle": "serif",
   "showPricing": true
-}/*EDITMODE-END*/;
+};
 
 function App() {
   const { useState, useEffect } = React;
@@ -16,6 +16,7 @@ function App() {
     try { return JSON.parse(localStorage.getItem('kj_library') || '[]'); } catch { return []; }
   });
   const [editConfig, setEditConfig] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Tweaks
   const [tweaks, setTweakState] = useState(TWEAK_DEFAULTS);
@@ -23,7 +24,6 @@ function App() {
     setTweakState(t => {
       const updates = typeof keyOrObj === 'object' ? keyOrObj : { [keyOrObj]: val };
       const next = { ...t, ...updates };
-      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: updates }, '*');
       // Apply accent color to CSS vars live
       if (updates.accentColor) {
         document.documentElement.style.setProperty('--caramel', updates.accentColor);
@@ -34,19 +34,6 @@ function App() {
       return next;
     });
   };
-
-  // Host tweaks protocol
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.data?.type === '__activate_edit_mode') setShowTweaks(true);
-      if (e.data?.type === '__deactivate_edit_mode') setShowTweaks(false);
-    };
-    window.addEventListener('message', handler);
-    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
-    return () => window.removeEventListener('message', handler);
-  }, []);
-
-  const [showTweaks, setShowTweaks] = useState(false);
 
   const showToast = (msg) => {
     const id = Date.now();
@@ -79,23 +66,29 @@ function App() {
   };
 
   const handleEditCake = (config) => {
-    // If saved cake has a raw prompt, pass that; otherwise skip
     setEditConfig(config);
     setPage('builder');
+    setMobileMenuOpen(false);
     showToast('✎ Cake loaded for remixing');
+  };
+
+  const navigateTo = (pageId) => {
+    setPage(pageId);
+    if (pageId !== 'builder') setEditConfig(null);
+    setMobileMenuOpen(false);
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--parchment)' }}>
       {/* Top nav */}
-      <header style={{
+      <header className="header-bar" style={{
         height: 58, flexShrink: 0, display: 'flex', alignItems: 'center',
         padding: '0 24px', background: 'var(--white)',
         borderBottom: '1px solid var(--parchment-dark)',
         gap: 24, position: 'relative', zIndex: 10,
       }}>
         {/* Logo */}
-        <button onClick={() => setPage('home')} style={{
+        <button id="logo-btn" onClick={() => navigateTo('home')} style={{
           background: 'none', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', gap: 10, padding: 0,
         }}>
@@ -111,8 +104,8 @@ function App() {
           </div>
         </button>
 
-        {/* Nav */}
-        <nav style={{ display: 'flex', gap: 4, marginLeft: 16 }}>
+        {/* Desktop Nav */}
+        <nav className="nav-desktop" style={{ display: 'flex', gap: 4, marginLeft: 16 }}>
           {[
             { id: 'home', label: 'Home' },
             { id: 'builder', label: 'Create' },
@@ -120,7 +113,7 @@ function App() {
           ].map(n => {
             const isActive = page === n.id;
             return (
-              <button key={n.id} onClick={() => { setPage(n.id); if (n.id !== 'builder') setEditConfig(null); }}
+              <button key={n.id} id={`nav-${n.id}`} onClick={() => navigateTo(n.id)}
                 style={{
                   padding: '6px 16px', borderRadius: 50, border: 'none', cursor: 'pointer',
                   fontFamily: 'var(--font-body)', fontSize: 13,
@@ -138,7 +131,7 @@ function App() {
         {/* Right side */}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
           {savedCakes.length > 0 && page !== 'library' && (
-            <button onClick={() => setPage('library')} style={{
+            <button id="saved-cakes-btn" onClick={() => navigateTo('library')} style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px',
               borderRadius: 50, border: '1.5px solid var(--parchment-dark)',
               background: 'transparent', cursor: 'pointer', fontFamily: 'var(--font-body)',
@@ -148,16 +141,55 @@ function App() {
             </button>
           )}
           {page !== 'builder' && (
-            <button className="btn btn-primary btn-sm" onClick={() => { setEditConfig(null); setPage('builder'); }}>
+            <button id="create-cake-btn" className="btn btn-primary btn-sm nav-desktop" onClick={() => { setEditConfig(null); navigateTo('builder'); }}>
               + Create Cake
             </button>
           )}
+
+          {/* Mobile hamburger */}
+          <button className="nav-mobile" onClick={() => setMobileMenuOpen(m => !m)}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: 22, padding: '4px 6px', display: 'flex',
+              color: 'var(--ink)',
+            }}
+            aria-label="Menu"
+          >
+            {mobileMenuOpen ? '✕' : '☰'}
+          </button>
         </div>
       </header>
 
+      {/* Mobile dropdown menu */}
+      {mobileMenuOpen && (
+        <div style={{
+          position: 'absolute', top: 58, left: 0, right: 0, zIndex: 100,
+          background: 'var(--white)', borderBottom: '1px solid var(--parchment-dark)',
+          padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 6,
+          boxShadow: 'var(--shadow-md)',
+        }}>
+          {[
+            { id: 'home', label: '🏠 Home' },
+            { id: 'builder', label: '✦ Create Cake' },
+            { id: 'library', label: '📚 Library' },
+          ].map(n => (
+            <button key={n.id} onClick={() => navigateTo(n.id)}
+              style={{
+                padding: '12px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: page === n.id ? 600 : 400,
+                background: page === n.id ? 'var(--parchment-mid)' : 'transparent',
+                color: 'var(--ink)', textAlign: 'left',
+              }}
+            >
+              {n.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Page content */}
       <main style={{ flex: 1, overflow: 'hidden' }}>
-        {page === 'home' && <HomePage onStart={() => setPage('builder')} onLibrary={() => setPage('library')} />}
+        {page === 'home' && <HomePage onStart={() => navigateTo('builder')} onLibrary={() => navigateTo('library')} />}
         {page === 'builder' && (
           <window.CakeBuilder
             onSave={handleSaveCake}
@@ -181,55 +213,6 @@ function App() {
           <div key={t.id} className="toast">{t.msg}</div>
         ))}
       </div>
-
-      {/* Tweaks Panel */}
-      {showTweaks && (
-        <TweaksPanel onClose={() => {
-          setShowTweaks(false);
-          window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
-        }}>
-          <TweakSection label="Bakery Contact">
-            <TweakText
-              label="Bakery WhatsApp Number"
-              value={tweaks.bakerPhone}
-              onChange={v => setTweak('bakerPhone', v)}
-              placeholder="+447700900000"
-            />
-          </TweakSection>
-          <TweakSection label="Appearance">
-            <TweakColor
-              label="Accent Colour"
-              value={tweaks.accentColor}
-              onChange={v => setTweak('accentColor', v)}
-            />
-            <TweakSlider
-              label="Card Corner Radius"
-              value={tweaks.cardRadius}
-              min={0} max={32} step={2}
-              onChange={v => setTweak('cardRadius', v)}
-            />
-            <TweakRadio
-              label="Font Style"
-              value={tweaks.fontStyle}
-              options={['serif', 'sans']}
-              onChange={v => {
-                setTweak('fontStyle', v);
-                document.documentElement.style.setProperty(
-                  '--font-serif',
-                  v === 'sans' ? "'DM Sans', system-ui, sans-serif" : "'Playfair Display', Georgia, serif"
-                );
-              }}
-            />
-          </TweakSection>
-          <TweakSection label="Features">
-            <TweakToggle
-              label="Show pricing estimates"
-              value={tweaks.showPricing}
-              onChange={v => setTweak('showPricing', v)}
-            />
-          </TweakSection>
-        </TweaksPanel>
-      )}
     </div>
   );
 }
@@ -242,7 +225,7 @@ function HomePage({ onStart, onLibrary }) {
   return (
     <div style={{ height: '100%', overflowY: 'auto' }}>
       {/* Hero */}
-      <section style={{
+      <section className="hero-section" style={{
         background: 'var(--ink)', color: 'var(--cream)',
         padding: '64px 48px', display: 'flex', alignItems: 'center',
         gap: 64, minHeight: 420,
@@ -266,7 +249,7 @@ function HomePage({ onStart, onLibrary }) {
 
           <h1 style={{
             fontFamily: 'var(--font-display)', fontSize: 56, lineHeight: 1.05,
-            fontWeight: 400, marginBottom: 20, textWrap: 'pretty',
+            fontWeight: 400, marginBottom: 20,
           }}>
             Design your<br />
             <em style={{ color: 'var(--gold)' }}>dream cake</em>
@@ -276,11 +259,11 @@ function HomePage({ onStart, onLibrary }) {
             Choose every detail — sponge, filling, frosting, and decoration — then let our AI inspire you. Share your creation with our community or place a bespoke order.
           </p>
 
-          <div style={{ display: 'flex', gap: 14 }}>
-            <button className="btn btn-gold" style={{ fontSize: 15, padding: '14px 32px' }} onClick={onStart}>
+          <div className="hero-cta-row" style={{ display: 'flex', gap: 14 }}>
+            <button id="hero-start-btn" className="btn btn-gold" style={{ fontSize: 15, padding: '14px 32px' }} onClick={onStart}>
               Start Creating
             </button>
-            <button onClick={onLibrary} style={{
+            <button id="hero-browse-btn" onClick={onLibrary} style={{
               background: 'rgba(255,255,255,0.08)', color: 'var(--cream)',
               border: '1.5px solid rgba(255,255,255,0.2)',
               padding: '14px 28px', borderRadius: 50, cursor: 'pointer',
@@ -296,7 +279,7 @@ function HomePage({ onStart, onLibrary }) {
         </div>
 
         {/* Hero cake previews */}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: -30, flexShrink: 0 }}>
+        <div className="hero-previews" style={{ position: 'relative', zIndex: 1, display: 'flex', gap: -30, flexShrink: 0 }}>
           {templates.map((t, i) => (
             <div key={t.id} style={{
               transform: `translateY(${i === 1 ? -20 : i === 2 ? 10 : 0}px) rotate(${i === 0 ? -4 : i === 2 ? 3 : 0}deg)`,
@@ -311,11 +294,11 @@ function HomePage({ onStart, onLibrary }) {
 
       {/* Features strip */}
       <section style={{ padding: '40px 48px', background: 'var(--parchment-mid)', borderBottom: '1px solid var(--parchment-dark)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+        <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
           {[
             { icon: '🎨', title: 'Full Creative Control', body: 'Choose every layer — sponge, filling, frosting, and up to 10 decoration types.' },
             { icon: '✦', title: 'AI-Powered Design', body: 'Describe your vision in words and let our AI generate your perfect cake design.' },
-            { icon: '🌸', title: 'Community Library', body: 'Share your creations, discover others\' designs, and rate your favourites.' },
+            { icon: '🌸', title: 'Community Library', body: "Share your creations, discover others' designs, and rate your favourites." },
             { icon: '📦', title: 'Place a Real Order', body: 'Share your design directly with the bakery via WhatsApp or email to order.' },
           ].map(f => (
             <div key={f.title}>
@@ -328,7 +311,7 @@ function HomePage({ onStart, onLibrary }) {
       </section>
 
       {/* Featured templates */}
-      <section style={{ padding: '48px 48px' }}>
+      <section className="templates-section" style={{ padding: '48px 48px' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 28 }}>
           <div>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 26, fontWeight: 600 }}>Start with a template</h2>
@@ -337,7 +320,7 @@ function HomePage({ onStart, onLibrary }) {
           <button className="btn btn-outline btn-sm" onClick={onLibrary}>View all →</button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+        <div className="templates-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
           {window.TEMPLATE_CAKES.map(t => (
             <FeaturedCard key={t.id} cake={t} onStart={onStart} />
           ))}
@@ -395,7 +378,7 @@ function FeaturedCard({ cake, onStart }) {
 
 function LogoMark({ size = 32 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-label="Kalyan-Ji Bakery logo">
       <rect width="32" height="32" rx="8" fill="#2C1A0E" />
       {/* Stylised cake tier */}
       <ellipse cx="16" cy="10" rx="9" ry="3" fill="#C9A96E" opacity="0.9" />
