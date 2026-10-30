@@ -1,3 +1,7 @@
+// ====================================================================
+// cake-library.jsx - the catalog of ingredients: every size, flavor,
+// color, filling and topper the bakery offers, with names and prices.
+// ====================================================================
 // Kalyan-Ji Bakery — Community Library Component
 
 function CakeLibrary({ onEditCake, userCakes, bakerPhone }) {

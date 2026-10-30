@@ -1,3 +1,8 @@
+// ====================================================================
+// cake-whatsapp.jsx - the order button: packs the whole cake design into
+// a neat WhatsApp message to the bakery's phone number, so ordering is
+// one tap and no account is needed.
+// ====================================================================
 // Kalyan-Ji Bakery — Shared WhatsApp Order Sheet
 // Used by both the Builder and the Library
 

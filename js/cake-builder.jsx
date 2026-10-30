@@ -1,3 +1,9 @@
+// ====================================================================
+// cake-builder.jsx - the 'design your cake' half: the form where the
+// customer describes and tweaks the cake. Can also start from a text
+// prompt or an inspiration photo, keeps a history of designs, and hands
+// the finished config to the renderer + WhatsApp order.
+// ====================================================================
 // Kalyan-Ji Bakery — Cake Builder (Prompt-First, with History + WhatsApp Share + Inspiration Upload)
 
 function CakeBuilder({ onSave, initialConfig = null, bakerPhone }) {

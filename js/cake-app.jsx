@@ -1,3 +1,9 @@
+// ====================================================================
+// cake-app.jsx - Kalyan-Ji Bakery's cake designer: the customer builds a
+// custom cake (size, layers, flavors, colors, toppers), watches it update
+// live as a drawing, then sends the order to the bakery over WhatsApp.
+// This file ties the builder, the drawing, and the order flow together.
+// ====================================================================
 // Kalyan-Ji Bakery — Main App Shell (Production)
 
 const TWEAK_DEFAULTS = {

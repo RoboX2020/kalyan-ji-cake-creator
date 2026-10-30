@@ -1,3 +1,7 @@
+// ====================================================================
+// tweaks-panel.jsx - the fine-tuning panel: sliders and pickers for the
+// small details (exact shades, sizes, extras) after the basics are chosen.
+// ====================================================================
 
 // tweaks-panel.jsx
 // Reusable Tweaks shell + form-control helpers.

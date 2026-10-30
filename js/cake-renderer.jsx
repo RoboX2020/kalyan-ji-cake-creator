@@ -1,3 +1,8 @@
+// ====================================================================
+// cake-renderer.jsx - draws the cake: turns the chosen options into a
+// live isometric (fake-3D) SVG picture - layers, frosting drips, toppers
+// and all - so the customer sees their cake before ordering.
+// ====================================================================
 // Kalyan-Ji Bakery — Isometric Cake Renderer
 // Renders a live, beautiful isometric cake SVG based on config
 
