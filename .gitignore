@@ -20,3 +20,6 @@ Thumbs.db
 
 # Vercel
 .vercel/
+
+# Local API key injection (never commit real keys)
+key.local.js
