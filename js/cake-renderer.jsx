@@ -6,6 +6,8 @@
 // Kalyan-Ji Bakery — Isometric Cake Renderer
 // Renders a live, beautiful isometric cake SVG based on config
 
+// The whole cake as an SVG drawing. 'Isometric' here means fake 3D: ellipses
+// for the tier tops plus straight sides make flat shapes read as round cake.
 function IsometricCake({ config, size = 300 }) {
   const {
     flavour = 'vanilla',
@@ -31,6 +33,8 @@ function IsometricCake({ config, size = 300 }) {
   const fillColor = fillingData.color;
 
   // Darken/lighten helpers
+  // Darken or lighten a hex color by a percent: split into R, G, B, shift each,
+  // reassemble. Derives the shadow/highlight tones from one chosen color.
   function shadeColor(hex, percent) {
     const num = parseInt(hex.replace('#', ''), 16);
     const amt = Math.round(2.55 * percent);
@@ -40,6 +44,7 @@ function IsometricCake({ config, size = 300 }) {
     return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
   }
 
+  // Every color gets darker variants for shading the fake-3D sides.
   const frostDark = shadeColor(frostHex, -30);
   const frostMid = shadeColor(frostHex, -12);
   const spongeDark = shadeColor(spongeColor, -20);
@@ -135,6 +140,8 @@ function IsometricCake({ config, size = 300 }) {
   );
 }
 
+// Work out each tier's size and position: the bottom tier is widest and each
+// tier above is smaller, stacked upward like a real wedding cake.
 function getTierConfigs(tierCount, size, shape) {
   // baseY = bottom of the lowest tier (sits just above the plate)
   const baseY = size * 0.78;
@@ -158,6 +165,7 @@ function getTierConfigs(tierCount, size, shape) {
   return tiers;
 }
 
+// The plate or board the cake sits on.
 function PlateShape({ cx, size, shape }) {
   const py = size * 0.83;
   const pw = size * 0.62;
@@ -175,6 +183,8 @@ function PlateShape({ cx, size, shape }) {
   return <ellipse cx={cx} cy={py} rx={pw * 0.5} ry={ph * 0.5} fill="url(#plateGrad)" stroke="#b8a888" strokeWidth="1" opacity="0.85" />;
 }
 
+// One tier (layer) of the cake, positioned and handed its colors; drawn as a
+// round, square or heart shape depending on the choice.
 function TierGroup({ tier, index, total, size, frostHex, frostDark, frostMid, spongeColor, spongeDark, fillColor, isNaked, isDrip, isTextured, shape, frostingStyle }) {
   const { w, h, ty } = tier;
   const cx = w / 2;
@@ -228,6 +238,8 @@ function TierGroup({ tier, index, total, size, frostHex, frostDark, frostMid, sp
   return null;
 }
 
+// A round tier: an ellipse top plus a curved side. 'Naked' style shows sponge
+// and filling stripes; 'drip' style adds frosting drips down the side.
 function RoundTier({ cx, w, h, ew, eh, frostHex, frostDark, frostMid, spongeColor, spongeDark, fillColor, isNaked, isDrip, isTextured, isTop, frostingStyle }) {
   const rx = ew / 2;
   const ry = eh / 2;
@@ -284,6 +296,7 @@ function RoundTier({ cx, w, h, ew, eh, frostHex, frostDark, frostMid, spongeColo
   );
 }
 
+// A square tier: the same idea with straight edges.
 function SquareTier({ cx, w, h, frostHex, frostDark, frostMid, spongeColor, spongeDark, fillColor, isNaked, isDrip, isTextured, isTop, frostingStyle }) {
   const hw = w / 2;
   const depth = w * 0.18;
@@ -324,6 +337,7 @@ function SquareTier({ cx, w, h, frostHex, frostDark, frostMid, spongeColor, spon
   );
 }
 
+// A heart-shaped tier, drawn with bezier curves (heartPath below).
 function HeartTier({ cx, w, h, frostHex, frostDark, frostMid, spongeColor, spongeDark, fillColor, isNaked, isDrip, isTextured, isTop, frostingStyle }) {
   const s = w * 0.44;
   const ty = h * 0.15;
@@ -360,6 +374,9 @@ function HeartTier({ cx, w, h, frostHex, frostDark, frostMid, spongeColor, spong
   );
 }
 
+// Everything on top of the cake - flowers, gold leaf, sprinkles, macarons,
+// candles, the message - scattered around the top tier with a little
+// circle math (each item placed at an angle around the center).
 function TopDecorations({ cx, topTier, hasFlowers, hasGoldLeaf, hasSprinkles, hasMacarons, hasBerries, hasChocShards, hasPearls, hasGlitter, hasRosettes, hasFondantShapes, candles, candleCount, frostHex, size, message, shape }) {
   if (!topTier) return null;
   const { w, ty } = topTier;

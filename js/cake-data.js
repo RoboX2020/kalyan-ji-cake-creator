@@ -1,6 +1,9 @@
 // Kalyan-Ji Bakery — Cake Creators Programme
 // Shared data layer
 
+// Every option the designer offers (flavours, frostings, fillings, colors,
+// decorations) with display names, swatch colors and short descriptions.
+// The builder menus and the cake drawing both read from here - edit once.
 const CAKE_DATA = {
   flavours: [
     { id: 'vanilla', name: 'Vanilla Bean', color: '#F5E6C8', description: 'Classic & creamy' },
