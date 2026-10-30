@@ -102,10 +102,19 @@ The app uses **Google's Gemini API** for AI features. You need a free API key:
 
 **For deployment with a pre-configured key:**
 
-```html
-<!-- Add before other scripts in index.html -->
-<script>window.__CAKE_API_KEY = 'your-key-here';</script>
+Never paste a real key into `index.html` or any other tracked file — that is exactly how keys leak into public git history. Instead, keep the key in a local, untracked file:
+
+```bash
+# key.local.js is listed in .gitignore, so it can never be committed
+echo "window.__CAKE_API_KEY = 'your-key-here';" > key.local.js
 ```
+
+```html
+<!-- Add before other scripts in index.html (the file itself stays untracked) -->
+<script src="key.local.js"></script>
+```
+
+If a key is ever committed, treat it as compromised: delete it in [Google AI Studio](https://aistudio.google.com/apikey) and create a fresh one. Removing it from source is not enough while it still works.
 
 ## 🌐 Deployment
 
